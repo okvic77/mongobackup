@@ -7,8 +7,6 @@ const spawn = require('child_process').spawn,
 var path = require('path');
 var base = path.join(process.env.DATA_DIR || '/data', 'mongodump')
 
-if (!fs.existsSync(base))
-    fs.mkdirSync(base);
 
 let {databases} = require('./data');
 

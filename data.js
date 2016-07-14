@@ -1,5 +1,6 @@
 const low = require('lowdb'),
-    fs = require('fs');
+    fs = require('fs'),
+    path = require('path');
 
 var configDb = {};
 
@@ -12,15 +13,16 @@ if (process.env.SECRET) {
     }
 }
 
-const base = process.env.DATA_DIR || '/data';
+const base = process.env.DATA_DIR || '/data',
+    mongodump = path.join(base, 'mongodump');
 
-var path = require('path');
 var config = path.join(base, 'db.json')
-
-console.log('config', base);
 
 if (!fs.existsSync(base))
     fs.mkdirSync(base);
+
+if (!fs.existsSync(mongodump))
+    fs.mkdirSync(mongodump);
 
 const db = low(config, configDb)
 
