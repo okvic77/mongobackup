@@ -26,9 +26,10 @@ if (!fs.existsSync(mongodump))
 
 const db = low(config, configDb)
 
-db.defaults({databases: [], jobs: []}).value()
+db.defaults({databases: [], jobs: [], file: "${database.id}/${new Date().toISOString()}"}).value()
 
 module.exports = {
     databases: db.get('databases'),
-    jobs: db.get('jobs')
+    jobs: db.get('jobs'),
+    file: db.get('file')
 };

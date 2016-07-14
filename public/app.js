@@ -173,7 +173,6 @@ const App = React.createClass({
                     {jobs.map(job => <Job key={job.id} job={job} database={databases.find(d => job.database == d.id)}/>)}
                 </tbody>
             </table>
-
             <Log/>
         </div>
     }

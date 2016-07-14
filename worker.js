@@ -7,18 +7,23 @@ const spawn = require('child_process').spawn,
 var path = require('path');
 var base = path.join(process.env.DATA_DIR || '/data', 'mongodump')
 
-let {databases} = require('./data');
+let {databases, file} = require('./data');
+var mkdirp = require('mkdirp');
 
 var cargo = module.exports = async.queue((id, callback) => {
     var database = databases.find({id}).value();
     var data = url.parse(database.uri);
-    var dir = path.join(base, `${database.id}/${new Date().toISOString()}`);
+    var filename = eval("`"+file.value()+"`");
+    var dir = path.join(base, filename);
+
+    if (!fs.existsSync(dir))
+        mkdirp.sync(dir);
     var args = [
         //'--gzip',
         '--host',
         data.host,
         '--out',
-        `${dir}/data`
+        `${dir}/dump`
     ];
 
     if (data.pathname && data.pathname.length > 1) {
@@ -31,8 +36,7 @@ var cargo = module.exports = async.queue((id, callback) => {
 
     const backup = spawn('mongodump', args);
     var logs = {
-        out: [],
-        manual: true
+        out: []
     }
     backup.stdout.on('data', (data) => {
         logs.out.push(data.toString('utf8').trim())
@@ -52,7 +56,9 @@ var cargo = module.exports = async.queue((id, callback) => {
 
     backup.on('close', (code) => {
         logs.exit = code;
-        fs.writeFileSync(`${dir}/log.json`, JSON.stringify(logs, null, 4))
+        logs.date = Date.now();
+        logs.dateFormated = new Date(),
+        fs.writeFileSync(`${dir}/data.json`, JSON.stringify(logs, null, 4))
         callback(null, code);
     });
 
