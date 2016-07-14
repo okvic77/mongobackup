@@ -18,7 +18,7 @@ async.forever(
           if (next) {
             if (next < now && (now - next) > 1000) {
               console.log('run');
-              var s = later.parse.cron(cron, true);
+              var s = later.parse.cron(cron, false);
               jobs.find({id}).assign({next:later.schedule(s).next().getTime()}).value();
               updateJobs();
               backup.push(database, done);

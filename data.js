@@ -5,7 +5,7 @@ var configDb = {};
 
 if (process.env.SECRET) {
     const Cryptr = require('cryptr'),
-        cryptr = new Cryptr('my secret key');
+        cryptr = new Cryptr(process.env.SECRET);
     configDb.format = {
         deserialize: str => JSON.parse(cryptr.decrypt(str)),
         serialize: obj => cryptr.encrypt(JSON.stringify(obj))
